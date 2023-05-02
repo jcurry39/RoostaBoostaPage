@@ -32,9 +32,9 @@ PCB Design
 ![Design](https://user-images.githubusercontent.com/94014563/235785362-c81eef54-80e2-4a7e-9631-68b42fa5c4d1.png)
 
 ## Code Examples
-The full source code can be found [here](https://github.com/mshakula/RoostaBoosta)
+Here a a few examples of the code. The full source code can be found [here](https://github.com/mshakula/RoostaBoosta).
 
-
+Main Method:
 ```C++ Main Method
 
 int
