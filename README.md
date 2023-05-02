@@ -96,7 +96,77 @@ main()
   }
 }
 ```
+The Code that plays the weather annoucment from the sd card.
+```C++ 
+void
+play_audio(weather_data* data)
+{
+  // read temperature
+  play_file("temperature/itis.pcm");
+  read_number(data->temperature);
+  play_file("temperature/doutside.pcm");
 
+  // read precipitation chance
+  play_file("precipitation/there_is.pcm");
+  read_number(data->precipitation_chance);
+  play_file("precipitation/percent_chance.pcm");
+
+  // read wind speed
+  play_file("wind/wind_speed.pcm");
+  read_number(data->wind_speed);
+  play_file("wind/mph.pcm");
+
+  // read humidity
+  play_file("humidity/humidity.pcm");
+  read_number(data->humidity);
+  play_file("humidity/percent.pcm");
+
+  // read weather
+  // only one allowed, if any condition is satified, return
+  // if no sutable phrase, say nothing
+  if (strstr(data->weather.c_str(), "thunder")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/thunderstorms.pcm");
+    return;
+  }
+
+  if (
+    strstr(data->weather.c_str(), "rain") ||
+    strstr(data->weather.c_str(), "drizzle")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/raining.pcm");
+    return;
+  }
+
+  if (
+    strstr(data->weather.c_str(), "snow") ||
+    strstr(data->weather.c_str(), "sleet")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/snowing.pcm");
+    return;
+  }
+
+  if (strstr(data->weather.c_str(), "partly")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/partly_cloudy.pcm");
+    return;
+  }
+
+  if (
+    strstr(data->weather.c_str(), "cloud") ||
+    strstr(data->weather.c_str(), "over")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/cloudy.pcm");
+    return;
+  }
+
+  if (strstr(data->weather.c_str(), "sun")) {
+    play_file("weather/weather.pcm");
+    play_file("weather/sunny.pcm");
+    return;
+  }
+}
+```
 
 ## Hardware
 
