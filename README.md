@@ -34,7 +34,8 @@ PCB Design
 ## Code Examples
 Here a a few examples of the code. The full source code can be found [here](https://github.com/mshakula/RoostaBoosta).
 
-Main Method:
+Main Method: 
+
 ```C++ Main Method
 int
 main()
@@ -98,6 +99,7 @@ main()
 
 
 This code that plays the weather annoucment from the sd card. play_file(char* filename) handles playing each indiviudal files. read_number(int num) interprets a number and plays the realated sounds.
+
 ```C++ play audio
 void
 play_audio(weather_data* data)
@@ -171,6 +173,7 @@ play_audio(weather_data* data)
 
 
 This is the structure that contains all the data about the weather. It is populated by the networking fuctions, and used by the LCD and audio playing fuction.
+
 ```C++ weather_data
 struct weather_data
 {
