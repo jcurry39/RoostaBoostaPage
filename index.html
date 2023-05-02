@@ -1,0 +1,175 @@
+<h1 class="code-line" data-line-start=0 data-line-end=1 ><a id="RoostaBoosta_0"></a>RoostaBoosta</h1>
+<p class="has-line-data" data-line-start="2" data-line-end="4">Who doesn’t need a good morning boost?<br>
+Return to your rich idyllic pastoral roots with RoostaBoosta™, the innovative, awesome, groundbreaking, fascinating, mind-boggling, stupendous IoT weather-predicting alarm clock!</p>
+<p class="has-line-data" data-line-start="5" data-line-end="7">Final project for Georgia Tech ECE4180.<br>
+Based on the newer <a href="https://os.mbed.com/docs/mbed-os/v6.16/introduction/index.html">MbedOS 6</a> platform, this project incorporates networking, API calls, and audio-visual effects for an web-enabled alarm clock / weather prediction station.</p>
+<p class="has-line-data" data-line-start="8" data-line-end="13">Designed By:<br>
+Jake Curry,<br>
+Raymond Barrett,<br>
+Matthew Shakula, and<br>
+Azad Al Kiki</p>
+<h1 class="code-line" data-line-start=14 data-line-end=15 ><a id="Usage_Overview_14"></a>Usage Overview</h1>
+<p class="has-line-data" data-line-start="15" data-line-end="16">RoostaBoosta™ fucntions as an alarm clock that displays the weather to the user on the alarm. During setup, the user connects to the bluetooth module of the device, and sends the connect command. The module then responds with a list of all nearby access points, and promts the user to respond with the SSID of the perfered network. The user then gives the password, and then the device connects to the network. Then, once the user inputs the location, the device displays the current time on the LCD, and will show the local weather on a push button input. The user can then input in a 4 digit alarm time in 24 hr time (hhmm) via the bluetooth connection. When the alarm triggers, the device will get the local weather, then play a rooster sound to wake the user. The user can then either wave their hand in front of the sonar device to snooze the alarm, or push a button to permanently turn off the alarm. Once the alarm is off, the LCD displays the weather infomation, and the speaker reads it to the user. The device then returns to displaying the time until the user sets antoher alarm.</p>
+<h2 class="code-line" data-line-start=17 data-line-end=18 ><a id="Usage_Video_17"></a>Usage Video</h2>
+<p class="has-line-data" data-line-start="19" data-line-end="20"><a href="https://youtu.be/PKmjmyOEXVI"><img src="https://img.youtube.com/vi/PKmjmyOEXVI/maxresdefault.jpg" alt="Watch the video"></a></p>
+<h1 class="code-line" data-line-start=21 data-line-end=22 ><a id="Technical_Overview_21"></a>Technical Overview</h1>
+<p class="has-line-data" data-line-start="23" data-line-end="24">PCB Schematic</p>
+<p class="has-line-data" data-line-start="25" data-line-end="26"><img src="https://user-images.githubusercontent.com/94014563/235785103-63d5ec5e-4542-47a8-97de-d0ed59df846a.png" alt="Schematic"></p>
+<p class="has-line-data" data-line-start="27" data-line-end="28">PCB Design</p>
+<p class="has-line-data" data-line-start="29" data-line-end="30"><img src="https://user-images.githubusercontent.com/94014563/235785362-c81eef54-80e2-4a7e-9631-68b42fa5c4d1.png" alt="Design"></p>
+<h2 class="code-line" data-line-start=31 data-line-end=32 ><a id="Code_Examples_31"></a>Code Examples</h2>
+<p class="has-line-data" data-line-start="32" data-line-end="33">Here a a few examples of the code. The full source code can be found <a href="https://github.com/mshakula/RoostaBoosta">here</a>.</p>
+<p class="has-line-data" data-line-start="34" data-line-end="35">Main Method:</p>
+<pre><code class="has-line-data" data-line-start="37" data-line-end="96" class="language-c++"><span class="hljs-function"><span class="hljs-keyword">int</span>
+<span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>{
+  turnOff.fall(&amp;pb_turnoff);
+  dispWeather.fall(&amp;pb_dispweather);
+  <span class="hljs-comment">// start thread for bt</span>
+  bt_thread.start(bt_api);
+  
+  <span class="hljs-comment">// wait for wifi to connect</span>
+  <span class="hljs-keyword">while</span>(!wifi.is_connected()){
+    ThisThread::sleep_for(<span class="hljs-number">1</span>s);
+  }
+
+  debug(<span class="hljs-string">"\r\n[main] Initializing SD Block Device..."</span>);
+  <span class="hljs-function">SDBlockDevice <span class="hljs-title">sd</span><span class="hljs-params">(
+    rb::pinout::kSD_mosi,
+    rb::pinout::kSD_miso,
+    rb::pinout::kSD_sck,
+    rb::pinout::kSD_cs)</span></span>;
+  {
+    <span class="hljs-keyword">spi_capabilities_t</span> caps;
+    spi_get_capabilities(rb::pinout::kSD_cs, <span class="hljs-literal">true</span>, &amp;caps);
+    debug(<span class="hljs-string">" maxumum speed: %d..."</span>, caps.maximum_frequency);
+    sd.frequency(caps.maximum_frequency);
+  }
+  debug(<span class="hljs-string">" done."</span>);
+
+  debug(<span class="hljs-string">"\r\n[main] Mounting SD card..."</span>);
+  <span class="hljs-function">FATFileSystem <span class="hljs-title">fs</span><span class="hljs-params">(AUX_MOUNT_POINT, &amp;sd)</span></span>;
+  debug(<span class="hljs-string">" done."</span>);
+
+  debug(<span class="hljs-string">"\r\n[main] Opening root file directory..."</span>);
+  <span class="hljs-keyword">if</span> (printdir()) {
+    MBED_ERROR(
+      MBED_MAKE_ERROR(MBED_MODULE_FILESYSTEM, errno),
+      <span class="hljs-string">"Could not open root file directory."</span>);
+  }
+  debug(<span class="hljs-string">" done."</span>);
+
+  debug(<span class="hljs-string">"\r\n[main] Running weather demo..."</span>);
+  weather_data  data_;
+  weather_data* data = &amp;data_;
+  updateweather(data);
+  <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+    <span class="hljs-keyword">if</span>(alarm_on){
+      updateweather(data);
+      alarm(data);
+    }
+    Display_Time(<span class="hljs-built_in">std</span>::chrono::system_clock::<span class="hljs-keyword">from_time_t</span>(time(<span class="hljs-literal">NULL</span>)));
+    ThisThread::sleep_for(<span class="hljs-number">1</span>s);
+    <span class="hljs-keyword">if</span>(disp_weather){
+      updateweather(data);
+      Display_Weather(data);
+      ThisThread::sleep_for(<span class="hljs-number">10</span>s);
+      disp_weather=<span class="hljs-literal">false</span>;
+    }
+  }
+}
+</code></pre>
+<p class="has-line-data" data-line-start="98" data-line-end="99">This code that plays the weather annoucment from the sd card. play_file(char* filename) handles playing each indiviudal files. read_number(int num) interprets a number and plays the realated sounds.</p>
+<pre><code class="has-line-data" data-line-start="101" data-line-end="170" class="language-c++"><span class="hljs-function"><span class="hljs-keyword">void</span>
+<span class="hljs-title">play_audio</span><span class="hljs-params">(weather_data* data)</span>
+</span>{
+  <span class="hljs-comment">// read temperature</span>
+  play_file(<span class="hljs-string">"temperature/itis.pcm"</span>);
+  read_number(data-&gt;temperature);
+  play_file(<span class="hljs-string">"temperature/doutside.pcm"</span>);
+
+  <span class="hljs-comment">// read precipitation chance</span>
+  play_file(<span class="hljs-string">"precipitation/there_is.pcm"</span>);
+  read_number(data-&gt;precipitation_chance);
+  play_file(<span class="hljs-string">"precipitation/percent_chance.pcm"</span>);
+
+  <span class="hljs-comment">// read wind speed</span>
+  play_file(<span class="hljs-string">"wind/wind_speed.pcm"</span>);
+  read_number(data-&gt;wind_speed);
+  play_file(<span class="hljs-string">"wind/mph.pcm"</span>);
+
+  <span class="hljs-comment">// read humidity</span>
+  play_file(<span class="hljs-string">"humidity/humidity.pcm"</span>);
+  read_number(data-&gt;humidity);
+  play_file(<span class="hljs-string">"humidity/percent.pcm"</span>);
+
+  <span class="hljs-comment">// read weather</span>
+  <span class="hljs-comment">// only one allowed, if any condition is satified, return</span>
+  <span class="hljs-comment">// if no sutable phrase, say nothing</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"thunder"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/thunderstorms.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"rain"</span>) ||
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"drizzle"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/raining.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"snow"</span>) ||
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"sleet"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/snowing.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"partly"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/partly_cloudy.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"cloud"</span>) ||
+    <span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"over"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/cloudy.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(data-&gt;weather.c_str(), <span class="hljs-string">"sun"</span>)) {
+    play_file(<span class="hljs-string">"weather/weather.pcm"</span>);
+    play_file(<span class="hljs-string">"weather/sunny.pcm"</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+}
+</code></pre>
+<p class="has-line-data" data-line-start="172" data-line-end="173">This is the structure that contains all the data about the weather. It is populated by the networking fuctions, and used by the LCD and audio playing fuction.</p>
+<pre><code class="has-line-data" data-line-start="175" data-line-end="184" class="language-c++"><span class="hljs-keyword">struct</span> weather_data
+{
+  <span class="hljs-keyword">int</span>         humidity;
+  <span class="hljs-keyword">int</span>         precipitation_chance;
+  <span class="hljs-keyword">int</span>         temperature;
+  <span class="hljs-keyword">int</span>         wind_speed;
+  <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> weather;
+};
+</code></pre>
+<h2 class="code-line" data-line-start=186 data-line-end=187 ><a id="Hardware_186"></a>Hardware</h2>
+<p class="has-line-data" data-line-start="188" data-line-end="189">The hardware used in this project is based on the hardware provided by the Georgia Tech ECE department.</p>
+<p class="has-line-data" data-line-start="190" data-line-end="191">Primary components used are:</p>
+<ul>
+<li class="has-line-data" data-line-start="192" data-line-end="193"><a href="https://os.mbed.com/platforms/mbed-LPC1768/">mBed LPC1768</a></li>
+<li class="has-line-data" data-line-start="193" data-line-end="194"><a href="https://www.sparkfun.com/products/11377">4D Systems uLCD-144-G2</a></li>
+<li class="has-line-data" data-line-start="194" data-line-end="195"><a href="https://www.sparkfun.com/products/15569">HC-SRO4 Ultrasonic Sensor</a></li>
+<li class="has-line-data" data-line-start="195" data-line-end="196"><a href="https://www.adafruit.com/product/2471">Adafruit ESP8266 Breakout</a></li>
+<li class="has-line-data" data-line-start="196" data-line-end="197"><a href="https://www.sparkfun.com/products/544">SparkFun microSD Breakout</a></li>
+<li class="has-line-data" data-line-start="197" data-line-end="198"><a href="https://www.sparkfun.com/products/13021">SparkFun RJ45 Ethernet Breakout</a></li>
+<li class="has-line-data" data-line-start="198" data-line-end="200"><a href="https://www.sparkfun.com/products/11044">SparkFun TPA2005D1 Amp</a></li>
+</ul>
+<p class="has-line-data" data-line-start="200" data-line-end="201">Schematics and a breakout PCB are designed in <a href="https://www.kicad.org/">KiCAD</a>, which is free and open-source.</p>
+
