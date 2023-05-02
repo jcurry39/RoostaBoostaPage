@@ -18,8 +18,8 @@ Azad Al Kiki
 RoostaBoosta™ fucntions as an alarm clock that displays the weather to the user on the alarm. During setup, the user connects to the bluetooth module of the device, and sends the connect command. The module then responds with a list of all nearby access points, and promts the user to respond with the SSID of the perfered network. The user then gives the password, and then the device connects to the network. Then, once the user inputs the location, the device displays the current time on the LCD, and will show the local weather on a push button input. The user can then input in a 4 digit alarm time in 24 hr time (hhmm) via the bluetooth connection. When the alarm triggers, the device will get the local weather, then play a rooster sound to wake the user. The user can then either wave their hand in front of the sonar device to snooze the alarm, or push a button to permanently turn off the alarm. Once the alarm is off, the LCD displays the weather infomation, and the speaker reads it to the user. The device then returns to displaying the time until the user sets antoher alarm.
 
 ## Usage Video
-Open the Video in New Tab
-[![Watch the video](https://img.youtube.com/PKmjmyOEXVI/maxresdefault.jpg)](https://youtu.be/PKmjmyOEXVI)
+
+[![Watch the video](https://img.youtube.com/vi/PKmjmyOEXVI/maxresdefault.jpg)](https://youtu.be/PKmjmyOEXVI)
 
 ## Hardware
 
