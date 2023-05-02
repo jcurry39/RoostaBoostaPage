@@ -92,7 +92,7 @@ main()
   }
 }
 ```
-```javascript I'm tab B
+```c++ I'm tab B
 console.log('Code Tab B');
 ```
 
