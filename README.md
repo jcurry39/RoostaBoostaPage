@@ -32,6 +32,9 @@ PCB Design
 ![Design](https://user-images.githubusercontent.com/94014563/235785362-c81eef54-80e2-4a7e-9631-68b42fa5c4d1.png)
 
 ## Code Examples
+The full source code can be found [here](https://github.com/mshakula/RoostaBoosta)
+
+
 ```C++ Main Method
 
 int
@@ -39,9 +42,10 @@ main()
 {
   turnOff.fall(&pb_turnoff);
   dispWeather.fall(&pb_dispweather);
-  // wifi
+  // start thread for bt
   bt_thread.start(bt_api);
   
+  // wait for wifi to connect
   while(!wifi.is_connected()){
     ThisThread::sleep_for(1s);
   }
@@ -91,9 +95,6 @@ main()
     }
   }
 }
-```
-```c++ I'm tab B
-console.log('Code Tab B');
 ```
 
 
