@@ -7,6 +7,11 @@ Return to your rich idyllic pastoral roots with RoostaBoosta™, the innovative,
 
 Final project for Georgia Tech ECE4180.
 Based on the newer [MbedOS 6](https://os.mbed.com/docs/mbed-os/v6.16/introduction/index.html) platform, this project incorporates networking, API calls, and audio-visual effects for an web-enabled alarm clock / weather prediction station.
+Designed By:
+Jake Curry
+Raymond Barrett
+Matthew Shakula
+Azad Al Kiki
 
 ## Hardware
 
