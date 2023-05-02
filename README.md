@@ -21,6 +21,10 @@ RoostaBoosta™ fucntions as an alarm clock that displays the weather to the use
 
 [![Watch the video](https://img.youtube.com/vi/PKmjmyOEXVI/maxresdefault.jpg)](https://youtu.be/PKmjmyOEXVI)
 
+#Technical Overview
+
+![Schematic](https://user-images.githubusercontent.com/94014563/235785103-63d5ec5e-4542-47a8-97de-d0ed59df846a.png)
+
 ## Hardware
 
 The hardware used in this project is based on the hardware provided by the Georgia Tech ECE department.
