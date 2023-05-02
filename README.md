@@ -21,9 +21,14 @@ RoostaBoosta™ fucntions as an alarm clock that displays the weather to the use
 
 [![Watch the video](https://img.youtube.com/vi/PKmjmyOEXVI/maxresdefault.jpg)](https://youtu.be/PKmjmyOEXVI)
 
-#Technical Overview
+# Technical Overview
 
+PCB Schematic
 ![Schematic](https://user-images.githubusercontent.com/94014563/235785103-63d5ec5e-4542-47a8-97de-d0ed59df846a.png)
+
+PCB Design
+![Design](https://user-images.githubusercontent.com/94014563/235785362-c81eef54-80e2-4a7e-9631-68b42fa5c4d1.png)
+
 
 ## Hardware
 
