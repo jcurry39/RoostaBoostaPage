@@ -96,8 +96,8 @@ main()
   }
 }
 ```
-The Code that plays the weather annoucment from the sd card.
-```C++ 
+The Code that plays the weather annoucment from the sd card. play_file(char* filename) handles playing each indiviudal files. read_number(int num) interprets a number and plays the realated sounds.
+```C++ play audio
 void
 play_audio(weather_data* data)
 {
