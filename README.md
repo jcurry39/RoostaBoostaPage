@@ -24,10 +24,77 @@ RoostaBoosta™ fucntions as an alarm clock that displays the weather to the use
 # Technical Overview
 
 PCB Schematic
+
 ![Schematic](https://user-images.githubusercontent.com/94014563/235785103-63d5ec5e-4542-47a8-97de-d0ed59df846a.png)
 
 PCB Design
+
 ![Design](https://user-images.githubusercontent.com/94014563/235785362-c81eef54-80e2-4a7e-9631-68b42fa5c4d1.png)
+
+## Code Examples
+```C++ Main Method
+
+int
+main()
+{
+  turnOff.fall(&pb_turnoff);
+  dispWeather.fall(&pb_dispweather);
+  // wifi
+  bt_thread.start(bt_api);
+  
+  while(!wifi.is_connected()){
+    ThisThread::sleep_for(1s);
+  }
+
+  debug("\r\n[main] Initializing SD Block Device...");
+  SDBlockDevice sd(
+    rb::pinout::kSD_mosi,
+    rb::pinout::kSD_miso,
+    rb::pinout::kSD_sck,
+    rb::pinout::kSD_cs);
+  {
+    spi_capabilities_t caps;
+    spi_get_capabilities(rb::pinout::kSD_cs, true, &caps);
+    debug(" maxumum speed: %d...", caps.maximum_frequency);
+    sd.frequency(caps.maximum_frequency);
+  }
+  debug(" done.");
+
+  debug("\r\n[main] Mounting SD card...");
+  FATFileSystem fs(AUX_MOUNT_POINT, &sd);
+  debug(" done.");
+
+  debug("\r\n[main] Opening root file directory...");
+  if (printdir()) {
+    MBED_ERROR(
+      MBED_MAKE_ERROR(MBED_MODULE_FILESYSTEM, errno),
+      "Could not open root file directory.");
+  }
+  debug(" done.");
+
+  debug("\r\n[main] Running weather demo...");
+  weather_data  data_;
+  weather_data* data = &data_;
+  updateweather(data);
+  while (true) {
+    if(alarm_on){
+      updateweather(data);
+      alarm(data);
+    }
+    Display_Time(std::chrono::system_clock::from_time_t(time(NULL)));
+    ThisThread::sleep_for(1s);
+    if(disp_weather){
+      updateweather(data);
+      Display_Weather(data);
+      ThisThread::sleep_for(10s);
+      disp_weather=false;
+    }
+  }
+}
+```
+```javascript I'm tab B
+console.log('Code Tab B');
+```
 
 
 ## Hardware
