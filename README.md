@@ -36,7 +36,6 @@ Here a a few examples of the code. The full source code can be found [here](http
 
 Main Method:
 ```C++ Main Method
-
 int
 main()
 {
@@ -96,7 +95,9 @@ main()
   }
 }
 ```
-The Code that plays the weather annoucment from the sd card. play_file(char* filename) handles playing each indiviudal files. read_number(int num) interprets a number and plays the realated sounds.
+
+
+This code that plays the weather annoucment from the sd card. play_file(char* filename) handles playing each indiviudal files. read_number(int num) interprets a number and plays the realated sounds.
 ```C++ play audio
 void
 play_audio(weather_data* data)
@@ -167,6 +168,8 @@ play_audio(weather_data* data)
   }
 }
 ```
+
+
 
 ## Hardware
 
