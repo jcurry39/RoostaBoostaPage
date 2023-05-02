@@ -170,6 +170,18 @@ play_audio(weather_data* data)
 ```
 
 
+This is the structure that contains all the data about the weather. It is populated by the networking fuctions, and used by the LCD and audio playing fuction.
+```C++ weather_data
+struct weather_data
+{
+  int         humidity;
+  int         precipitation_chance;
+  int         temperature;
+  int         wind_speed;
+  std::string weather;
+};
+```
+
 
 ## Hardware
 
