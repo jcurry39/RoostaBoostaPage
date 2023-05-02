@@ -1,5 +1,3 @@
-![MbedOS Header Image](https://raw.githubusercontent.com/ARMmbed/mbed-os/master/logo.png)
-
 # RoostaBoosta
 
 Who doesn't need a good morning boost?
